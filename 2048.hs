@@ -5,7 +5,7 @@ import System.Random
 main = do
     gen <- getStdGen
     let (board, newGen) = insertNewTile gen [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
-    let (newBoard, newNewGen) = insertNewTile newGen board
+    let (newBoard, newNewGen) = insertNewTile newGen board -- adding initial tiles
     putStrLn $ showBoard newBoard
     playTurn newBoard newNewGen
 
@@ -26,13 +26,15 @@ update dir board gen = case dir of
 
 updateBoard rotations board gen
     | board == newBoard = (board, gen)
-    | otherwise = insertNewTile gen newBoard
+    | otherwise = insertNewTile gen newBoard -- add tile only if something moved
     where newBoard = turnAndShiftBoard rotations board
 
+-- rotate board so the shift goes left, do the shit, then rotate it back
 turnAndShiftBoard times board = iterate rotateBack (shiftBoard (iterate rotate board !! times)) !! times
 
 shiftBoard board = map (zeropad . shift . filter (/=0)) board
 
+-- only shifting to the left is implemented
 shift (x:y:rest)
     | x == y = x+y:(shift rest)
     | otherwise = x:(shift (y:rest))
@@ -42,6 +44,7 @@ zeropad row
     | length row == 4 = row
     | otherwise = row ++ replicate (4 - length row) 0
 
+-- replace one of the [0] tiles with a 2 or 4
 insertNewTile gen board = replaceZero index board newGen
     where (index, newGen) = randomR (0, (getNumZeros board)-1) gen :: (Int, StdGen)
 
