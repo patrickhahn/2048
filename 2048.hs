@@ -29,7 +29,7 @@ updateBoard rotations board gen
     | otherwise = insertNewTile gen newBoard -- add tile only if something moved
     where newBoard = turnAndShiftBoard rotations board
 
--- rotate board so the shift goes left, do the shit, then rotate it back
+-- rotate board so the shift goes left, do the shift, then rotate it back
 turnAndShiftBoard times board = iterate rotateBack (shiftBoard (iterate rotate board !! times)) !! times
 
 shiftBoard board = map (zeropad . shift . filter (/=0)) board
